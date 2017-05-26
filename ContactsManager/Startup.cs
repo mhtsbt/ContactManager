@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FeatureToggle.Internal;
 using Microsoft.EntityFrameworkCore;
+using ContactsManager.Toggles;
 
 namespace ContactsManager
 {
@@ -37,7 +38,8 @@ namespace ContactsManager
 
         private void ConfigureFeatureToggles(IServiceCollection services)
         {
-            var provider = new AppSettingsProvider { Configuration = Configuration };           
+            var provider = new AppSettingsProvider { Configuration = Configuration };
+            services.AddSingleton(new BirthdayCalculationsToggle { ToggleValueProvider = provider });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,22 +1,22 @@
+using ContactsManager.Models;
+using ContactsManager.Toggles;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ContactsManager;
-using ContactsManager.Models;
 
 namespace ContactsManager.Controllers
 {
     public class ContactPersonController : Controller
     {
         private readonly AppDataContext _context;
+        private readonly BirthdayCalculationsToggle _birthdayCalculationsToggle;
 
-        public ContactPersonController(AppDataContext context)
+        public ContactPersonController(AppDataContext context, BirthdayCalculationsToggle birthdayCalculationsToggle)
         {
-            _context = context;    
+            _context = context;
+            _birthdayCalculationsToggle = birthdayCalculationsToggle;
         }
 
         private int CalculateAge(DateTime dayOfBirth)
@@ -29,9 +29,12 @@ namespace ContactsManager.Controllers
         {
             var persons = await _context.Persons.ToListAsync();
 
-            foreach(ContactPerson person in persons)
+            if (_birthdayCalculationsToggle.FeatureEnabled)
             {
-                person.Age = CalculateAge(person.DayOfBirth);
+                foreach (ContactPerson person in persons)
+                {
+                    person.Age = CalculateAge(person.DayOfBirth);
+                }
             }
 
             return View(persons);
