@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FeatureToggle.Internal;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContactsManager
 {
@@ -25,14 +26,16 @@ namespace ContactsManager
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             ConfigureFeatureToggles(services);
 
             services.AddMvc();
         }
 
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppDataContext context)
         private void ConfigureFeatureToggles(IServiceCollection services)
         {
             var provider = new AppSettingsProvider { Configuration = Configuration };           
@@ -43,6 +46,8 @@ namespace ContactsManager
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            MigrateDatabase(context);
 
             if (env.IsDevelopment())
             {
@@ -62,6 +67,11 @@ namespace ContactsManager
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private void MigrateDatabase(AppDataContext context)
+        {
+            context.Database.Migrate();
         }
     }
 }
