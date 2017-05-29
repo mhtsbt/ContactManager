@@ -11,6 +11,7 @@ namespace ContactsManager
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
+                .UseUrls("http://*:5000")
                 .UseApplicationInsights()
                 .Build();
 

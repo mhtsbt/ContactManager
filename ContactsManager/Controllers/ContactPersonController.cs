@@ -134,7 +134,7 @@ namespace ContactsManager.Controllers
 
         public IActionResult SendMail(string email)
         {
-            SendSyncMail(email);
+            //SendSyncMail(email);
             SendAsyncMailMessage(email);
 
             return View("EmailOk");

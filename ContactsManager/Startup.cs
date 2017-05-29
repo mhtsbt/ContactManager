@@ -27,7 +27,11 @@ namespace ContactsManager
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+           
+                services.AddDbContext<AppDataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+           
+              // services.AddDbContext<AppDataContext>(options => options.UseInMemoryDatabase());
+            
 
             services.AddMvc();
         }
